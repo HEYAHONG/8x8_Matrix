@@ -1,0 +1,21 @@
+<html>
+<body>
+<pre>
+<h1>礦ision Build Log</h1>
+<h2>Project:</h2>
+C:\Users\computer\Desktop\20_88点阵模块显示\点阵程序\_88Matrix.uvproj
+Project File Date:  08/07/2018
+
+<h2>Output:</h2>
+Build target 'Target 1'
+compiling main.c...
+linking...
+Program Size: data=9.0 xdata=0 code=164
+creating hex file from "_88Matrix"...
+"_88Matrix" - 0 Error(s), 0 Warning(s).
+Build target 'Target 1'
+compiling main.c...
+linking...
+Program Size: data=9.0 xdata=0 code=164
+creating hex file from "_88Matrix"...
+"_88Matrix" - 0 Error(s), 0 Warning(s).
