@@ -8,11 +8,15 @@
 #define LEDARRAY_DI   P34 //串行数据输入端
 
 //二维数组 内含字摸代码，取摸方式和软件都在本目录内
-unsigned char  code Display_word[2][8] = {
+unsigned char  code Display_word[2][8] = {	 //测试用数组
 0x00,0x48,0x2A,0x8E,0xFB,0x0E,0x2A,0x48,//亲
 0x0C,0x1E,0x3E,0x7C,0x7C,0x3E,0x1E,0x0C //桃心（形状） 
 };
 
+unsigned char code  Default_Word[2][8] = {	   
+0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,//全灭
+0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF //全亮
+} ;
 unsigned char VBuff[8]; //LED显示缓冲区
 
 //发送一个直接数据给点阵模块
@@ -68,10 +72,13 @@ VBuff[k]=*src++;
 //#define T1MS (65536-FOSC/1000)      //1T模式
 #define T50MS (65536-FOSC/12/20) //12T模式
 unsigned  long SysClk=0;  //系统时钟记录变量
+bit TestFlag=1; //定义一系列标志，TestFlag为是否显示内部测试图像（心形和亲字）
+
+
 void tm0_isr() interrupt 1 	//定时器0中断处理函数
 {
     SysClk++;
-	{ //其它需要在定时器0处理的事
+    if(TestFlag){ //显示测试点阵图像
 		if(SysClk%40==0) 
 		{
 		CopyCodeToBuff(Display_word[0]);
@@ -80,9 +87,8 @@ void tm0_isr() interrupt 1 	//定时器0中断处理函数
 		 {
 		CopyCodeToBuff(Display_word[1]);
 		}
-		if(SysClk== 4000000000)	 SysClk=0; //系统时钟上界
-	}
-	
+		}
+	if(SysClk== 4000000000)	 SysClk=0; //系统时钟上界
 }
 void init_tm0()	//定时器0初始化
 {
@@ -97,6 +103,20 @@ void init_tm0()	//定时器0初始化
     EA = 1;
 }
 
+sbit INT0 = 0xB2; //如果出现编译错误，可注释掉此行，此行主要补充stc15里缺失的定义。
+ void exint0() interrupt 0       //INT0中断入口
+{
+    if(TestFlag=~TestFlag) CopyCodeToBuff(Default_Word[1]);		//测试外部中断，点亮屏幕
+	else                   CopyCodeToBuff(Default_Word[0]);	    //测试外部中断，熄灭屏幕
+}
+
+void init_exint0()
+{
+	INT0 = 1;
+    IT0 = 1;                    //设置INT0的中断类型 (1:仅下降沿 0:上升沿和下降沿)
+    EX0 = 1;                    //使能INT0中断
+    EA = 1;
+}
 /*stc15修改部分结束*/
 
 void main()
@@ -104,7 +124,7 @@ void main()
 
 	unsigned char k, temp;
 	init_tm0(); //初始化定时器0
-
+	init_exint0(); //初始化外部中断0
 	while(1)   //将缓冲区的内容放到LED点阵上。
 	{
 			temp = 0x7f;

@@ -1,4 +1,4 @@
-BL51 BANKED LINKER/LOCATER V6.22                                                        08/11/2018  16:36:12  PAGE 1
+BL51 BANKED LINKER/LOCATER V6.22                                                        08/13/2018  14:33:10  PAGE 1
 
 
 BL51 BANKED LINKER/LOCATER V6.22, INVOKED BY:
@@ -25,22 +25,28 @@ LINK MAP OF MODULE:  _88Matrix (MAIN)
             * * * * * * *   D A T A   M E M O R Y   * * * * * * *
             REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
             DATA    0008H     000CH     UNIT         ?DT?MAIN
-            IDATA   0014H     0001H     UNIT         ?STACK
+                    0014H     000CH                  *** GAP ***
+            BIT     0020H.0   0000H.1   UNIT         ?BI?MAIN
+                    0020H.1   0000H.7                *** GAP ***
+            IDATA   0021H     0001H     UNIT         ?STACK
 
             * * * * * * *   C O D E   M E M O R Y   * * * * * * *
             CODE    0000H     0003H     ABSOLUTE     
-            CODE    0003H     0007H     UNIT         ?C_INITSEG
-                    000AH     0001H                  *** GAP ***
+            CODE    0003H     0003H     ABSOLUTE     
+                    0006H     0005H                  *** GAP ***
             CODE    000BH     0003H     ABSOLUTE     
             CODE    000EH     00DFH     UNIT         ?C?LIB_CODE
-            CODE    00EDH     00C2H     UNIT         ?PR?TM0_ISR?MAIN
-            CODE    01AFH     008CH     UNIT         ?C_C51STARTUP
-            CODE    023BH     0027H     UNIT         ?PR?MAIN?MAIN
-            CODE    0262H     0021H     UNIT         ?PR?_SEND_BYTE?MAIN
-            CODE    0283H     001CH     UNIT         ?PR?_COPYCODETOBUFF?MAIN
-            CODE    029FH     001CH     UNIT         ?PR?_COPYTOBUFF?MAIN
-            CODE    02BBH     0012H     UNIT         ?PR?INIT_TM0?MAIN
-            CODE    02CDH     0010H     UNIT         ?CO?MAIN
+            CODE    00EDH     00C5H     UNIT         ?PR?TM0_ISR?MAIN
+            CODE    01B2H     008CH     UNIT         ?C_C51STARTUP
+            CODE    023EH     0040H     UNIT         ?PR?EXINT0?MAIN
+            CODE    027EH     002AH     UNIT         ?PR?MAIN?MAIN
+            CODE    02A8H     0021H     UNIT         ?PR?_SEND_BYTE?MAIN
+            CODE    02C9H     0020H     UNIT         ?CO?MAIN
+            CODE    02E9H     001CH     UNIT         ?PR?_COPYCODETOBUFF?MAIN
+            CODE    0305H     001CH     UNIT         ?PR?_COPYTOBUFF?MAIN
+            CODE    0321H     0012H     UNIT         ?PR?INIT_TM0?MAIN
+            CODE    0333H     0009H     UNIT         ?PR?INIT_EXINT0?MAIN
+            CODE    033CH     0009H     UNIT         ?C_INITSEG
 
 
 
@@ -53,18 +59,25 @@ SEGMENT
 ?PR?TM0_ISR?MAIN
   +--> ?CO?MAIN
   +--> ?PR?_COPYCODETOBUFF?MAIN
+BL51 BANKED LINKER/LOCATER V6.22                                                      08/13/2018  14:33:10  PAGE 2
+
+
+
+*** NEW ROOT ***************************************************
+
+?PR?EXINT0?MAIN
+  +--> ?CO?MAIN
+  +--> ?PR?_COPYCODETOBUFF?MAIN
 
 *** NEW ROOT ***************************************************
 
 ?C_C51STARTUP
   +--> ?PR?MAIN?MAIN
   +--> ?C_INITSEG
-BL51 BANKED LINKER/LOCATER V6.22                                                      08/11/2018  16:36:12  PAGE 2
-
-
 
 ?PR?MAIN?MAIN
   +--> ?PR?INIT_TM0?MAIN
+  +--> ?PR?INIT_EXINT0?MAIN
   +--> ?PR?_SEND_BYTE?MAIN
 
 
@@ -79,7 +92,7 @@ SYMBOL TABLE OF MODULE:  _88Matrix (MAIN)
   D:0080H         PUBLIC        P0
   D:0090H         PUBLIC        P1
   D:00A0H         PUBLIC        P2
-  C:0262H         PUBLIC        _Send_Byte
+  C:02A8H         PUBLIC        _Send_Byte
   D:00B0H         PUBLIC        P3
   D:00C0H         PUBLIC        P4
   D:00C8H         PUBLIC        P5
@@ -88,9 +101,11 @@ SYMBOL TABLE OF MODULE:  _88Matrix (MAIN)
   D:00F8H         PUBLIC        P7
   D:00A8H         PUBLIC        IE
   D:00B8H         PUBLIC        IP
+  B:00B0H.2       PUBLIC        INT0
+  B:0020H.0       PUBLIC        TestFlag
   D:00D8H         PUBLIC        CCON
-  C:023BH         PUBLIC        main
-  C:02BBH         PUBLIC        init_tm0
+  C:027EH         PUBLIC        main
+  C:0321H         PUBLIC        init_tm0
   D:0098H         PUBLIC        SCON
   D:0089H         PUBLIC        TMOD
   D:0088H         PUBLIC        TCON
@@ -99,127 +114,151 @@ SYMBOL TABLE OF MODULE:  _88Matrix (MAIN)
   B:00B0H.5       PUBLIC        P35
   D:008EH         PUBLIC        AUXR
   C:00EDH         PUBLIC        tm0_isr
+  C:02D9H         PUBLIC        Default_Word
   B:00A8H.1       PUBLIC        ET0
   D:008CH         PUBLIC        TH0
+  B:0088H.0       PUBLIC        IT0
+  B:00A8H.0       PUBLIC        EX0
+BL51 BANKED LINKER/LOCATER V6.22                                                      08/13/2018  14:33:10  PAGE 3
+
+
   D:008AH         PUBLIC        TL0
   B:0088H.4       PUBLIC        TR0
+  C:023EH         PUBLIC        exint0
   D:0008H         PUBLIC        VBuff
   D:0010H         PUBLIC        SysClk
-  C:0283H         PUBLIC        _CopyCodeToBuff
-  C:029FH         PUBLIC        _CopyToBuff
-  C:02CDH         PUBLIC        Display_word
+  C:02E9H         PUBLIC        _CopyCodeToBuff
+  C:0305H         PUBLIC        _CopyToBuff
+  C:0333H         PUBLIC        init_exint0
+  C:02C9H         PUBLIC        Display_word
   D:00D0H         PUBLIC        PSW
   -------         PROC          _SEND_BYTE
   D:0007H         SYMBOL        dat
   -------         DO            
   D:0006H         SYMBOL        i
   -------         ENDDO         
-  C:0262H         LINE#         19
-  C:0262H         LINE#         20
-  C:0262H         LINE#         22
-  C:0264H         LINE#         23
-  C:0265H         LINE#         24
-BL51 BANKED LINKER/LOCATER V6.22                                                      08/11/2018  16:36:12  PAGE 3
-
-
-  C:0267H         LINE#         25
-  C:0268H         LINE#         27
-  C:026AH         LINE#         28
-  C:026AH         LINE#         29
-  C:026EH         LINE#         30
-  C:026EH         LINE#         31
-  C:0270H         LINE#         32
-  C:0272H         LINE#         34
-  C:0272H         LINE#         35
-  C:0274H         LINE#         36
-  C:0274H         LINE#         38
-  C:0276H         LINE#         39
-  C:0277H         LINE#         40
-  C:0279H         LINE#         41
-  C:027AH         LINE#         43
-  C:027EH         LINE#         44
-  C:0282H         LINE#         45
+  C:02A8H         LINE#         23
+  C:02A8H         LINE#         24
+  C:02A8H         LINE#         26
+  C:02AAH         LINE#         27
+  C:02ABH         LINE#         28
+  C:02ADH         LINE#         29
+  C:02AEH         LINE#         31
+  C:02B0H         LINE#         32
+  C:02B0H         LINE#         33
+  C:02B4H         LINE#         34
+  C:02B4H         LINE#         35
+  C:02B6H         LINE#         36
+  C:02B8H         LINE#         38
+  C:02B8H         LINE#         39
+  C:02BAH         LINE#         40
+  C:02BAH         LINE#         42
+  C:02BCH         LINE#         43
+  C:02BDH         LINE#         44
+  C:02BFH         LINE#         45
+  C:02C0H         LINE#         47
+  C:02C4H         LINE#         48
+  C:02C8H         LINE#         49
   -------         ENDPROC       _SEND_BYTE
   -------         PROC          _COPYCODETOBUFF
   D:0006H         SYMBOL        src
   -------         DO            
   D:0005H         SYMBOL        k
   -------         ENDDO         
-  C:0283H         LINE#         47
-  C:0283H         LINE#         48
-  C:0283H         LINE#         49
-  C:0285H         LINE#         50
-  C:0285H         LINE#         51
-  C:0285H         LINE#         52
-  C:029AH         LINE#         53
-  C:029EH         LINE#         54
+  C:02E9H         LINE#         51
+  C:02E9H         LINE#         52
+  C:02E9H         LINE#         53
+  C:02EBH         LINE#         54
+  C:02EBH         LINE#         55
+  C:02EBH         LINE#         56
+  C:0300H         LINE#         57
+  C:0304H         LINE#         58
   -------         ENDPROC       _COPYCODETOBUFF
   -------         PROC          _COPYTOBUFF
   D:0006H         SYMBOL        src
   -------         DO            
   D:0005H         SYMBOL        k
   -------         ENDDO         
-  C:029FH         LINE#         56
-  C:029FH         LINE#         57
-  C:029FH         LINE#         58
-  C:02A1H         LINE#         59
-  C:02A1H         LINE#         60
-  C:02A1H         LINE#         61
-  C:02B6H         LINE#         62
-  C:02BAH         LINE#         63
+BL51 BANKED LINKER/LOCATER V6.22                                                      08/13/2018  14:33:10  PAGE 4
+
+
+  C:0305H         LINE#         60
+  C:0305H         LINE#         61
+  C:0305H         LINE#         62
+  C:0307H         LINE#         63
+  C:0307H         LINE#         64
+  C:0307H         LINE#         65
+  C:031CH         LINE#         66
+  C:0320H         LINE#         67
   -------         ENDPROC       _COPYTOBUFF
   -------         PROC          TM0_ISR
-  C:00EDH         LINE#         71
-  C:010AH         LINE#         73
-  C:011FH         LINE#         74
-  C:011FH         LINE#         75
-  C:0143H         LINE#         76
-  C:0143H         LINE#         77
-  C:014AH         LINE#         78
-  C:014AH         LINE#         79
-  C:016FH         LINE#         80
-  C:016FH         LINE#         81
-BL51 BANKED LINKER/LOCATER V6.22                                                      08/11/2018  16:36:12  PAGE 4
-
-
-  C:0176H         LINE#         82
-  C:0176H         LINE#         83
-  C:0194H         LINE#         84
-  C:0194H         LINE#         86
+  C:00EDH         LINE#         78
+  C:010AH         LINE#         80
+  C:011FH         LINE#         81
+  C:0122H         LINE#         82
+  C:0146H         LINE#         83
+  C:0146H         LINE#         84
+  C:014DH         LINE#         85
+  C:014DH         LINE#         86
+  C:0172H         LINE#         87
+  C:0172H         LINE#         88
+  C:0179H         LINE#         89
+  C:0179H         LINE#         90
+  C:0179H         LINE#         91
+  C:0197H         LINE#         92
   -------         ENDPROC       TM0_ISR
   -------         PROC          INIT_TM0
-  C:02BBH         LINE#         87
-  C:02BBH         LINE#         88
-  C:02BBH         LINE#         90
-  C:02BEH         LINE#         92
-  C:02C1H         LINE#         93
-  C:02C3H         LINE#         94
-  C:02C6H         LINE#         95
-  C:02C8H         LINE#         96
-  C:02CAH         LINE#         97
-  C:02CCH         LINE#         98
+  C:0321H         LINE#         93
+  C:0321H         LINE#         94
+  C:0321H         LINE#         96
+  C:0324H         LINE#         98
+  C:0327H         LINE#         99
+  C:0329H         LINE#         100
+  C:032CH         LINE#         101
+  C:032EH         LINE#         102
+  C:0330H         LINE#         103
+  C:0332H         LINE#         104
   -------         ENDPROC       INIT_TM0
+  -------         PROC          EXINT0
+  C:023EH         LINE#         107
+  C:0255H         LINE#         109
+  C:0262H         LINE#         110
+  C:0269H         LINE#         111
+  -------         ENDPROC       EXINT0
+  -------         PROC          INIT_EXINT0
+  C:0333H         LINE#         113
+  C:0333H         LINE#         114
+  C:0333H         LINE#         115
+  C:0335H         LINE#         116
+  C:0337H         LINE#         117
+  C:0339H         LINE#         118
+  C:033BH         LINE#         119
+  -------         ENDPROC       INIT_EXINT0
   -------         PROC          MAIN
   -------         DO            
   D:0004H         SYMBOL        k
   D:0005H         SYMBOL        temp
   -------         ENDDO         
-  C:023BH         LINE#         102
-  C:023BH         LINE#         103
-  C:023BH         LINE#         106
-  C:023EH         LINE#         108
-  C:023EH         LINE#         109
-  C:023EH         LINE#         110
-  C:0240H         LINE#         111
-  C:0242H         LINE#         112
-  C:0242H         LINE#         113
-  C:0247H         LINE#         114
-  C:0250H         LINE#         115
-  C:0252H         LINE#         116
-  C:0253H         LINE#         118
-  C:0255H         LINE#         119
-  C:0256H         LINE#         120
-  C:025CH         LINE#         121
+BL51 BANKED LINKER/LOCATER V6.22                                                      08/13/2018  14:33:10  PAGE 5
+
+
+  C:027EH         LINE#         122
+  C:027EH         LINE#         123
+  C:027EH         LINE#         126
+  C:0281H         LINE#         127
+  C:0284H         LINE#         128
+  C:0284H         LINE#         129
+  C:0284H         LINE#         130
+  C:0286H         LINE#         131
+  C:0288H         LINE#         132
+  C:0288H         LINE#         133
+  C:028DH         LINE#         134
+  C:0296H         LINE#         135
+  C:0298H         LINE#         136
+  C:0299H         LINE#         138
+  C:029BH         LINE#         139
+  C:029CH         LINE#         140
+  C:02A2H         LINE#         141
   -------         ENDPROC       MAIN
   -------         ENDMOD        MAIN
 
@@ -234,5 +273,5 @@ SYMBOL TABLE OF MODULE:  _88Matrix (MAIN)
 *** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
     SEGMENT: ?PR?_COPYTOBUFF?MAIN
 
-Program Size: data=21.0 xdata=0 code=732
+Program Size: data=21.1 xdata=0 code=832
 LINK/LOCATE RUN COMPLETE.  1 WARNING(S),  0 ERROR(S)
